@@ -98,25 +98,29 @@ public class InsertElementGenerator extends AbstractXmlElementGenerator {
         for (int i = 0; i < columns.size(); i++) {
             IntrospectedColumn introspectedColumn = columns.get(i);
 
-            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("UpdatedDatetime"))
-                insertClause.append("sysdatetime()");
-            else {
-                insertClause.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
+            insertClause.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
+
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("UpdatedDatetime") ||
+                    introspectedColumn.getActualColumnName().equalsIgnoreCase("CreatedDatetime")) {
+                valuesClause.append("sysdatetime()");
+            } else {
+
                 valuesClause.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
-                if (i + 1 < columns.size()) {
-                    insertClause.append(", "); //$NON-NLS-1$
-                    valuesClause.append(", "); //$NON-NLS-1$
-                }
+            }
 
-                if (valuesClause.length() > 80) {
-                    answer.addElement(new TextElement(insertClause.toString()));
-                    insertClause.setLength(0);
-                    OutputUtilities.xmlIndent(insertClause, 1);
+            if (i + 1 < columns.size()) {
+                insertClause.append(", "); //$NON-NLS-1$
+                valuesClause.append(", "); //$NON-NLS-1$
+            }
 
-                    valuesClauses.add(valuesClause.toString());
-                    valuesClause.setLength(0);
-                    OutputUtilities.xmlIndent(valuesClause, 1);
-                }
+            if (valuesClause.length() > 80) {
+                answer.addElement(new TextElement(insertClause.toString()));
+                insertClause.setLength(0);
+                OutputUtilities.xmlIndent(insertClause, 1);
+
+                valuesClauses.add(valuesClause.toString());
+                valuesClause.setLength(0);
+                OutputUtilities.xmlIndent(valuesClause, 1);
             }
         }
 
