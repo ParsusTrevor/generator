@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2017 the original author or authors.
+ *    Copyright 2006-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,6 +65,13 @@ public class UpdateByPrimaryKeySelectiveElementGenerator extends
 
         for (IntrospectedColumn introspectedColumn : ListUtilities.removeGeneratedAlwaysColumns(introspectedTable
                 .getNonPrimaryKeyColumns())) {
+
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("createdById"))  {
+                continue;
+            }
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("createdDatetime")) {
+                continue;
+            }
             sb.setLength(0);
             sb.append(introspectedColumn.getJavaProperty());
             sb.append(" != null"); //$NON-NLS-1$

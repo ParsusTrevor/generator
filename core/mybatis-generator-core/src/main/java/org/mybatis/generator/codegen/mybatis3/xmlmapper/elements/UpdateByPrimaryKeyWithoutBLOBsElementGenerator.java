@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2017 the original author or authors.
+ *    Copyright 2006-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -69,11 +69,22 @@ public class UpdateByPrimaryKeyWithoutBLOBsElementGenerator extends
         while (iter.hasNext()) {
             IntrospectedColumn introspectedColumn = iter.next();
 
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("createdById"))  {
+                continue;
+            }
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("createdDatetime")) {
+                continue;
+            }
+
             sb.append(MyBatis3FormattingUtilities
                     .getEscapedColumnName(introspectedColumn));
             sb.append(" = "); //$NON-NLS-1$
-            sb.append(MyBatis3FormattingUtilities
-                    .getParameterClause(introspectedColumn));
+
+            if(introspectedColumn.getActualColumnName().equalsIgnoreCase("updatedDatetime")) {
+                sb.append("sysdatetime()");
+            } else {
+                sb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
+            }
 
             if (iter.hasNext()) {
                 sb.append(',');
